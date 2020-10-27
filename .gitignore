@@ -1,0 +1,6 @@
+__pycache__
+config.py
+credentials.json
+*.pickle
+clues.txt
+*.png
