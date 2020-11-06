@@ -2,12 +2,16 @@ from functools import total_ordering
 
 @total_ordering
 class Word:
-    def __init__(self, clue, solution):
+    def __init__(self, clue, solution, pos=(-1, -1), axis=-1):
         self.clue = clue
-        self.solution = solution.upper().replace("Ü", "UE").replace("Ö", "OE").replace("Ä", "AE")
+        self.solution = solution.upper()\
+            .replace("Ü", "UE").replace("Ö", "OE")\
+            .replace("Ä", "AE").replace('"', "")\
+            .replace(".","").replace(",","")\
+            .replace("'","")
 
-        self.pos = (-1, -1)
-        self.axis = -1
+        self.pos = pos
+        self.axis = axis
 
     def set_pos(self, p):
         self.pos = p
@@ -22,7 +26,7 @@ class Word:
         return self.solution
 
     def __repr__(self) -> str:
-        return "Word('" + self.clue + "','" + self.solution + "', " + str(self.pos) + ", " + str(self.axis) + ")"
+        return "Word('" + self.clue + "','" + self.solution + "', (" + str(self.pos[0])+", "+str(self.pos[1]) + "), " + str(self.axis) + ")"
 
     def __eq__(self, other) -> bool:
         return self.clue == other.clue and self.solution == other.solution

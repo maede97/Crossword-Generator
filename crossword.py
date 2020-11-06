@@ -6,6 +6,9 @@ import time
 import random
 import copy
 
+import pickle
+
+
 """
 Algorithm:
 
@@ -69,6 +72,10 @@ class Crossword:
             elif w_.axis == axis == 1:
                 if w_.pos[1] == word_pos[1] and word_pos[0] + l_w >= w_.pos[0]:
                     return False
+
+            # prevent same clue twice
+            elif w_.clue == w.clue:
+                return False
             
         # check every character position now
         w_str = str(w)
@@ -262,11 +269,14 @@ class Crossword:
 
         return self.algo2(grid, wordlist, used_words, not_used)
 
-    def create3(self):
-        random.shuffle(self.wordlist)
-        #wordlist_sorted = sorted(self.wordlist, reverse=True)
+    def create3(self, shuffle):
+        if shuffle:
+            random.shuffle(self.wordlist)
+            wordlist_sorted = self.wordlist
+        else:
+            wordlist_sorted = sorted(self.wordlist, reverse=True)
 
-        g, wl, uw, nu = self.algo2(self.grid[:], self.wordlist, [], [])
+        g, wl, uw, nu = self.algo2(self.grid[:], wordlist_sorted, [], [])
         self.used_words = uw
         self.grid = g
     
@@ -278,17 +288,18 @@ class Crossword:
             positions = (self.grid == c)
 
             if(not positions.any()):
-                return False
+                print("Could not hide character (not found)", c)
+                continue
             else:
                 positions_all = np.argwhere(positions)
                 index = np.random.randint(0, len(positions_all))
-
-                while index in added_indices:
-                    if len(positions_all) >= added_indices.count(index):
-                        return False
+                while (positions_all[index][0], positions_all[index][1]) in self.solution_positions:
+                    if len(positions_all) < added_indices.count(index):
+                        print("Could not hide character (not enough)", c)
+                        break
                     index = np.random.randint(0, len(positions_all))
                 added_indices.append(index)
-                self.solution_positions.append(positions_all[index])
+                self.solution_positions.append((positions_all[index][0], positions_all[index][1]))
         return True
     
     def fitness(self):
@@ -298,7 +309,30 @@ class Crossword:
                 g[w.pos[0], w.pos[1] : w.pos[1] + len(w)] += 1.0
             else:
                 g[w.pos[0] : w.pos[0] + len(w), w.pos[1]] += 1.0
-        return np.linalg.norm(g)
+        return np.linalg.norm(g, ord=2)**2
 
     def get_grid(self):
         return self.grid
+
+    def store_grid(self, filename : str):
+        self.dump_words("words_"+filename)
+
+    def load_grid(self, filename : str):
+        self.load_words("words_"+filename)
+        # place words on grid
+        for w in self.used_words:
+            if w.axis == 1: # 1 = downwards
+                self.grid[w.pos[0] : w.pos[0] + len(w), w.pos[1]] = list(w)
+            else:
+                self.grid[w.pos[0], w.pos[1] : w.pos[1] + len(w)] = list(w)
+
+    def dump_words(self, filename):
+        with open(filename, 'w') as token:
+            for w in self.used_words:
+                token.write(repr(w)+"\n")
+
+    def load_words(self, filename):
+        words = open(filename, "r").read().split("\n")
+        for line in words:
+            if line == "": continue
+            self.used_words.append(eval(line))
