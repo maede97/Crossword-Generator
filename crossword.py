@@ -320,12 +320,23 @@ class Crossword:
     def load_grid(self, filename : str):
         self.load_words("words_"+filename)
         # place words on grid
-        for w in self.used_words:
+        for i,w in enumerate(self.used_words):
             if w.axis == 1: # 1 = downwards
                 self.grid[w.pos[0] : w.pos[0] + len(w), w.pos[1]] = list(w)
             else:
                 self.grid[w.pos[0], w.pos[1] : w.pos[1] + len(w)] = list(w)
 
+            # check all other words if this alreay exists
+            for j, w_ in enumerate(self.used_words):
+                if i == j:
+                    continue
+                else:
+                    if w == w_:
+                        print("DOUBLE WORD,", repr(w))
+                    elif w.clue == w_.clue:
+                        print("Same clue,", repr(w), repr(w_))
+                    elif str(w) == str(w_):
+                        print("Same Solution,", repr(w), repr(w_))
     def dump_words(self, filename):
         with open(filename, 'w') as token:
             for w in self.used_words:

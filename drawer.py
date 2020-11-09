@@ -16,8 +16,8 @@ def draw(grid, used_words : [Word], loesung_pos) -> None:
     ax = fig_sol.add_subplot(111)
     ax.set_aspect('equal')
 
-    ax.set_xlim(minx, maxx)
-    ax.set_ylim(maxy, miny)
+    ax.set_xlim(minx-0.5, maxx+0.5)
+    ax.set_ylim(maxy+0.5, miny-0.5)
     ax.set_xticks([],[])
     ax.set_yticks([],[])
     ax.set_axis_off()
@@ -51,8 +51,8 @@ def draw(grid, used_words : [Word], loesung_pos) -> None:
     ax = fig_challenge.add_subplot(111)
     ax.set_aspect('equal')
 
-    ax.set_xlim(minx, maxx)
-    ax.set_ylim(maxy, miny)
+    ax.set_xlim(minx-0.5, maxx+0.5)
+    ax.set_ylim(maxy+0.5, miny-0.5)
     ax.set_xticks([],[])
     ax.set_yticks([],[])
     ax.set_axis_off()
@@ -88,14 +88,16 @@ def draw(grid, used_words : [Word], loesung_pos) -> None:
 
     delim = ": "
 
+    # add numbers
     for i,k in enumerate(sorted(pos_numbers.keys())):
-        ax.annotate(str(i+1), (pos_numbers[k][0].pos[1] + 0.35, pos_numbers[k][0].pos[0] + 0.6),fontsize="xx-large")
+        ax.annotate(str(i+1), (pos_numbers[k][0].pos[1] + 0.35, pos_numbers[k][0].pos[0] + 0.6), fontsize="xx-large",color="gray")
 
         for w in pos_numbers[k]:
             if w.axis == 0:
                 horizontal.append(str(i+1) + delim + w.clue)
             else:
                 vertical.append(str(i+1) + delim + w.clue)
+
     for c in loesung_pos:
         ax.plot(c[1] + 0.5, c[0] + 0.5, 'o', ms=40, mec='b', mfc='none', mew=2)
     with open("clues.txt", "w") as wr:

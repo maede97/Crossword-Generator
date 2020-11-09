@@ -7,12 +7,11 @@ DOWNLOAD_NEW = False
 SIZE=18
 ITERATIONS = 1000
 
-CREATE_NEW = True
+CREATE_NEW = False
 EDIT_OLD = True
 loesung = "Weihnachten"
 
 if CREATE_NEW:
-
     dl = DataLoader()
     if DOWNLOAD_NEW:
         dl.load_data_from_web()
@@ -53,10 +52,11 @@ if CREATE_NEW:
 
 if EDIT_OLD:
     cw = Crossword(SIZE, SIZE)
-    cw.set_wordlist(words)
     cw.load_grid("intermediate_store.txt")
 
     cw.hide_secret(loesung)
+
+    print(cw.fitness())
 
     draw(cw.get_grid(), cw.used_words, cw.solution_positions)
 
