@@ -4,3 +4,5 @@ credentials.json
 *.pickle
 clues.txt
 *.png
+
+words_intermediate_store.txt
