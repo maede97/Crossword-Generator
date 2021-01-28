@@ -3,13 +3,25 @@ from crossword import Crossword
 from drawer import draw
 import copy
 
+
 DOWNLOAD_NEW = False
 SIZE=18
-ITERATIONS = 1000
+ITERATIONS = 10
 
 CREATE_NEW = False
 EDIT_OLD = True
-loesung = "Weihnachten"
+DRAW_LINES = False
+loesung = ""
+
+old_folders = ["Dez20", "Jan21", "Feb21"]
+old_words = []
+for f in old_folders:
+    cw = Crossword(30,30)
+    cw.load_grid("intermediate_store.txt", prefix=f + "/")
+    for w in cw.get_used_words():
+        old_words.append(w)
+        # read in old words
+
 
 if CREATE_NEW:
     dl = DataLoader()
@@ -28,6 +40,7 @@ if CREATE_NEW:
     while iters < ITERATIONS:
         cw = Crossword(SIZE, SIZE)
         cw.set_wordlist(words)
+        cw.set_old_words(old_words)
         cw.create3(shuffle=True)
         print("Created crossword with fitness", cw.fitness())
         if cw.fitness() > best_fit:
@@ -58,7 +71,7 @@ if EDIT_OLD:
 
     print(cw.fitness())
 
-    draw(cw.get_grid(), cw.used_words, cw.solution_positions)
+    draw(cw.get_grid(), cw.used_words, cw.solution_positions, DRAW_LINES)
 
 else:
     print("Doing nothing...")

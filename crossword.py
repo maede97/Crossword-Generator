@@ -40,6 +40,9 @@ class Crossword:
     def set_wordlist(self, wl : [Word]) -> None:
         self.wordlist = copy.deepcopy(wl)
 
+    def set_old_words(self, wl : [Word]) -> None:
+        self.old_words = copy.deepcopy(wl)
+
     def get_used_words(self) -> [Word]:
         return self.used_words
 
@@ -92,6 +95,12 @@ class Crossword:
                 continue
             else:
                 return False
+
+        for w_ in self.old_words:
+            # compare old words only with solution
+            if w_.solution == w.solution:
+                return False
+        
         return True
 
     def __rand_word(self, wordlist) -> int:
@@ -317,8 +326,8 @@ class Crossword:
     def store_grid(self, filename : str):
         self.dump_words("words_"+filename)
 
-    def load_grid(self, filename : str):
-        self.load_words("words_"+filename)
+    def load_grid(self, filename : str, prefix=""):
+        self.load_words(prefix + "words_"+filename)
         # place words on grid
         for i,w in enumerate(self.used_words):
             if w.axis == 1: # 1 = downwards

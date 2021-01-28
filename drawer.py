@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from word import Word
 import numpy as np
 
-def draw(grid, used_words : [Word], loesung_pos) -> None:
+def draw(grid, used_words : [Word], loesung_pos, DRAW_LINES) -> None:
     minx, miny, maxx, maxy = 100, 100, 0, 0
     for w in used_words:
         minx = min(minx, w.pos[1])
@@ -41,6 +41,12 @@ def draw(grid, used_words : [Word], loesung_pos) -> None:
 
         for i,c in enumerate(s):
             ax.annotate(c, (p1 + (1-w.axis) * i + 0.35, p0 + w.axis * i + 0.6), fontsize="xx-large")
+
+        if(DRAW_LINES):
+            if w.axis == 0:
+                ax.plot([p1 + 0.25, p1 + len(w) - 0.25], [p0 + 0.5, p0 + 0.5], color="#1B6DE855", lw=16)
+            else:
+                ax.plot([p1 + 0.5, p1 + 0.5], [p0 + 0.25, p0 + len(w) - 0.25], color="#9DE81B55", lw=16)
     
     #fig_sol.tight_layout()
     plt.savefig("solution.png",bbox_inches='tight',dpi=100)
